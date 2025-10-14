@@ -2,8 +2,9 @@ import os
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 
-load_dotenv()
-groq_key = os.getenv("GROQ_API_KEY")
+import streamlit as st  # ✅ Use Streamlit's secrets
+
+groq_key = st.secrets["GROQ_API_KEY"]  # ✅ Pull from secrets
 
 llm = ChatGroq(
     model_name="llama-3.1-8b-instant",
