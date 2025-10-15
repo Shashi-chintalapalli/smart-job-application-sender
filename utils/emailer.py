@@ -28,13 +28,14 @@ Inputs:
 
 Instructions:
 - Start directly with "Dear {hr_first_name}," — use "Hiring Manager" if the name is unknown
-- Do NOT include any lines like "Here's a professional email", "To:", or "Subject:"
-- Write a concise, confident, respectful email tailored to the job
-- Mention the role and company naturally in the first paragraph
-- Highlight matching skills from the resume
-- Mention willingness to learn any missing skills
-- End with a clear call to action
-- Include this signature block at the end:
+- Do NOT include any lines like "To:", "Subject:", or explanations
+- Keep the email concise, confident, and professional
+- Mention the job title and company naturally in the opening line
+- Highlight key matching skills from the resume
+- Optionally mention one relevant project or achievement
+- Show eagerness to learn any missing skills
+- End with a clear call to action (e.g., to discuss further)
+- Close with this signature block at the end:
 
 Best regards,  
 Shashi Kumar Reddy  
