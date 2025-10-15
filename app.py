@@ -51,11 +51,18 @@ if "generated_email" in st.session_state:
     st.code(st.session_state.hr_email, language="markdown")
 
     st.markdown("**Generated Email Body:**")
-    st.code(st.session_state.generated_email, language="markdown")
+    email_text = st.session_state.generated_email
+    dynamic_height = min(800, max(200, len(email_text) // 4))  # adjust automatically
+
+    st.text_area(
+    label="Generated Email Body",
+    value=email_text,
+    height=dynamic_height,
+    label_visibility="collapsed"
+    )
 
     st.download_button("📥 Download Email", st.session_state.generated_email, file_name="application_email.txt")
 
-    # Optional Gmail Send Section
     # Optional Gmail Send Section
     with st.expander("📤 Send Email via Gmail (Optional)"):
         sender_email = st.text_input("Your Gmail Address")
