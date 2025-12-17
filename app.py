@@ -214,7 +214,7 @@ st.set_page_config(page_title="Resume to HR Email Generator", layout="wide")
 # SESSION STATE
 # ----------------------
 if "active_template" not in st.session_state:
-    st.session_state.active_template = None
+    st.session_state.active_template = "template1"
 
 # ======================
 # HEADER
