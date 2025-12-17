@@ -390,17 +390,17 @@ elif st.session_state.active_template == "template2":
                     st.error("Could not extract HR email or company name.")
                 else:
                     eligibility_email = f"""
-Hello,
+Dear Team,
 
-I hope you are doing well. I am writing to inquire about the {job_title} (Remote – US) position at {company}.
+I hope you are doing well. I came across the {job_title} role at {company} while exploring remote data science opportunities and wanted to reach out for a quick clarification.
 
-I am a Data Scientist with 2 years of professional experience working across data science and AI use cases. I am currently based in India and would like to understand whether this remote role is open to candidates located outside the United States, or if US work authorization is required.
+I am a Data Scientist with around 2 years of hands-on experience working across data science and AI use cases. I am currently based in India and noticed that this position is listed as remote. I wanted to check whether there is an option to work remotely from India, or if the role requires US-based work authorization.
 
-Please find my resume attached for your review.
+I am actively looking for new opportunities and would be available to join immediately. Please find my resume attached for your reference.
 
-Thank you for your time and guidance. I look forward to your response.
+Thank you for your time and consideration. I look forward to your response.
 
-Kind regards,  
+Best regards,  
 Shashi Kumar Reddy Chintalapalli  
 Data Scientist  
 📧 shashi.chintalapalli@gmail.com  
