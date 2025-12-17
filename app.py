@@ -222,7 +222,7 @@ if "active_template" not in st.session_state:
 st.markdown(
     """
     <div style="text-align:center; margin-bottom:20px;">
-        <h1>📧 Resume to HR Email Generator</h1>
+        <h1>🤖 AI-Powered Job Application Email Generator</h1>
         <p style="font-size:18px;">Choose a template to generate and send job application emails</p>
     </div>
     """,
