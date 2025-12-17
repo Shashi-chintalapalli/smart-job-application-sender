@@ -268,7 +268,7 @@ if st.session_state.active_template == "template1":
 
     # ---------- INPUT ----------
     with left_col:
-        st.header("📥 Input")
+        st.header("📥 Linkedin HR Email Generator")
 
         resume_file = st.file_uploader(
             "Upload Resume (PDF, DOCX, TXT)",
@@ -361,7 +361,7 @@ elif st.session_state.active_template == "template2":
     # LEFT: INPUT
     # ======================
     with left_col:
-        st.header("📥 Input")
+        st.header("📥 Remote Enquiry Email Generator")
 
         # IMPORTANT: Let Streamlit manage this key
         resume_file = st.file_uploader(
