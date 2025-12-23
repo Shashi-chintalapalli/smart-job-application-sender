@@ -598,71 +598,96 @@ def normalize_email_spacing(text):
 # =========================================================
 # TEMPLATE 1 – HR EMAIL GENERATOR
 # =========================================================
+# # =========================================================
+# # TEMPLATE 1 – FULL PROFESSIONAL EMAIL (YOUR MAIN APP)
+# # =========================================================
 if st.session_state.active_template == "template1":
 
     left_col, right_col = st.columns(2)
 
+    # ---------- INPUT ----------
     with left_col:
         st.header("📥 Linkedin HR Email Generator")
 
-        resume_file = st.file_uploader("Upload Resume", type=["pdf", "docx", "txt"])
-        jd_text_input = st.text_area("Paste Job Post (with HR Email)", height=250)
+        resume_file = st.file_uploader(
+            "Upload Resume (PDF, DOCX, TXT)",
+            type=["pdf", "docx", "txt"]
+        )
+
+        jd_text_input = st.text_area(
+            "Paste Job Post (with HR Email)",
+            height=250
+        )
+
         job_title = st.text_input("Job Title")
 
         if st.button("Generate Email"):
-            if resume_file and jd_text_input and job_title:
+            if resume_file and jd_text_input.strip() and job_title:
                 hr_email, company = extract_hr_email_and_company(jd_text_input)
-                resume_text = parse_file(resume_file)
-                name, email, phone, linkedin = extract_candidate_details(resume_text)
 
-                raw_email = generate_application_email(
-                    name, email, phone, linkedin,
-                    resume_text, jd_text_input,
-                    company, job_title, hr_email
-                )
+                if not hr_email or not company:
+                    st.error("❌ Could not extract HR email or company name.")
+                else:
+                    resume_text = parse_file(resume_file)
+                    name, email, phone, linkedin = extract_candidate_details(resume_text)
 
-                st.session_state.generated_email = normalize_email_spacing(
-                    filter_signature_block(raw_email)
-                )
-                st.session_state.hr_email = hr_email
-                st.session_state.company = company
-                st.session_state.job_title = job_title
+                    raw_email = generate_application_email(
+                        name,
+                        email,
+                        phone,
+                        linkedin,
+                        resume_text,
+                        jd_text_input,
+                        company,
+                        job_title,
+                        hr_email
+                    )
 
+                    cleaned = normalize_email_spacing(
+                        filter_signature_block(raw_email)
+                    )
+
+                    st.session_state.generated_email = cleaned
+                    st.session_state.hr_email = hr_email
+                    st.session_state.company = company
+                    st.session_state.job_title = job_title
+
+    # ---------- OUTPUT ----------
     with right_col:
         if "generated_email" in st.session_state:
+            st.header("📤 Output")
+
             subject = f"Application for {st.session_state.job_title} at {st.session_state.company}"
+            st.markdown("**Subject Line**")
             st.code(subject)
-            edited_email = st.text_area("Edit Email", st.session_state.generated_email, height=450)
 
-# =========================================================
-# TEMPLATE 2 – REMOTE ENQUIRY
-# =========================================================
-elif st.session_state.active_template == "template2":
+            st.markdown("**HR Email**")
+            st.code(st.session_state.hr_email)
 
-    left_col, right_col = st.columns(2)
+            edited_email = st.text_area(
+                "✏️ Edit Email",
+                st.session_state.generated_email,
+                height=450
+            )
 
-    with left_col:
-        st.header("📥 Remote Enquiry Email Generator")
-        resume_file = st.file_uploader("Upload Resume", type=["pdf", "docx", "txt"], key="t2")
-        jd_text = st.text_area("Paste Job Post", height=250)
-        job_title = st.text_input("Job Title")
+            with st.expander("📨 Send Email via Gmail"):
+                sender_email = st.text_input("Your Gmail")
+                app_password = st.text_input("Gmail App Password", type="password")
 
-        if st.button("Generate Email", key="t2_btn"):
-            hr_email, company = extract_hr_email_and_company(jd_text)
-            st.session_state.t2_email = f"""
-Dear Team,
+                if st.button("Send Email"):
+                    result = send_email_via_gmail(
+                        sender_email,
+                        app_password,
+                        st.session_state.hr_email,
+                        subject,
+                        edited_email,
+                        resume_file
+                    )
 
-I am writing to inquire about the remote eligibility for the {job_title} role at {company}.
-I am based in India with 2+ years of experience and available to join immediately.
-
-Best regards,
-Shashi Kumar Reddy
-"""
-            st.session_state.t2_hr = hr_email
-
-    with right_col:
-        if "t2_email" in st.session_state:
-            st.text_area("Email Preview", st.session_state.t2_email, height=450)
+                    if result is True:
+                        st.success("✅ Email sent successfully!")
+                    else:
+                        st.error(f"❌ Failed: {result}")
 
 # =========================================================
 # TEMPLATE 3 – LINKEDIN TIME-BASED SEARCH (BUTTON FLOW)
