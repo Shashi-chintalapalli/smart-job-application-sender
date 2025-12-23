@@ -670,7 +670,17 @@ Shashi Kumar Reddy
 elif st.session_state.active_template == "template3":
 
     st.header("🔍 LinkedIn Time-Based Job Search")
+    st.write("Select a role first, then choose the timeline")
 
+    # --------------------------------------------------
+    # INIT SESSION STATE
+    # --------------------------------------------------
+    if "selected_role" not in st.session_state:
+        st.session_state.selected_role = None
+
+    # --------------------------------------------------
+    # LINK MAP
+    # --------------------------------------------------
     LINK_MAP = {
         "Data Scientist": {
             "24h": "https://www.linkedin.com/search/results/content/?datePosted=%22past-24h%22&keywords=%22Data%20Scientist%22%20and%20%22hiring%22%20OR%20%220-2%20Years%22",
@@ -690,7 +700,11 @@ elif st.session_state.active_template == "template3":
         },
     }
 
-    st.subheader("Select Role")
+    # --------------------------------------------------
+    # ROLE BUTTONS
+    # --------------------------------------------------
+    st.subheader("🧠 Select Role")
+
     role_cols = st.columns(4)
 
     for col, role in zip(role_cols, LINK_MAP.keys()):
@@ -698,17 +712,33 @@ elif st.session_state.active_template == "template3":
             if st.button(role, use_container_width=True):
                 st.session_state.selected_role = role
 
+    # --------------------------------------------------
+    # TIMELINE BUTTONS (ONLY AFTER ROLE SELECTED)
+    # --------------------------------------------------
     if st.session_state.selected_role:
-        st.subheader(f"Timeline for {st.session_state.selected_role}")
-        t1, t2 = st.columns(2)
+        st.subheader(f"⏳ Timeline for {st.session_state.selected_role}")
 
-        with t1:
-            if st.button("🚀 Past 24 Hours", use_container_width=True):
-                webbrowser.open_new_tab(LINK_MAP[st.session_state.selected_role]["24h"])
+        col1, col2 = st.columns(2)
 
-        with t2:
-            if st.button("📅 Past Week", use_container_width=True):
-                webbrowser.open_new_tab(LINK_MAP[st.session_state.selected_role]["week"])
+        with col1:
+            st.link_button(
+                "🚀 Past 24 Hours",
+                LINK_MAP[st.session_state.selected_role]["24h"],
+                use_container_width=True
+            )
+
+        with col2:
+            st.link_button(
+                "📅 Past Week",
+                LINK_MAP[st.session_state.selected_role]["week"],
+                use_container_width=True
+            )
+
+        st.info(
+            "ℹ️ Make sure you are logged into LinkedIn in your browser "
+            "to see complete and accurate results."
+        )
+
 
 # ======================
 # FOOTER
