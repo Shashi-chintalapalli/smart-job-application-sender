@@ -1,184 +1,514 @@
 
 
-# import streamlit as st
-# from dotenv import load_dotenv
-# from utils.parser import parse_file, extract_hr_email_and_company, extract_candidate_details
-# from utils.emailer import generate_application_email
-# from utils.gmail_sender import send_email_via_gmail
-# import re
+# # import streamlit as st
+# # from dotenv import load_dotenv
+# # from utils.parser import parse_file, extract_hr_email_and_company, extract_candidate_details
+# # from utils.emailer import generate_application_email
+# # from utils.gmail_sender import send_email_via_gmail
+# # import re
 
-# load_dotenv()
-# st.set_page_config(page_title="Resume to HR Email Generator", layout="wide")
+# # load_dotenv()
+# # st.set_page_config(page_title="Resume to HR Email Generator", layout="wide")
 
-# st.markdown(
-#     """
-#     <div style='text-align: center; padding-bottom: 1rem;'>
-#         <h1>📧 Resume to HR Email Generator</h1>
-#         <p style='font-size: 18px;'>Upload your resume and paste the job post to generate a tailored application email.</p>
-#     </div>
-#     """,
-#     unsafe_allow_html=True
-# )
-# # ✅ Remove "Not Provided" lines from signature block
-# def filter_signature_block(email_text):
-#     if "Best regards," not in email_text:
-#         return email_text
-#     body, signature = email_text.split("Best regards,", 1)
-#     signature_lines = signature.strip().splitlines()
-#     filtered_lines = [line.strip() for line in signature_lines if line.strip().lower() != "not provided"]
-#     return f"{body.strip()}\n\nBest regards,\n" + "\n".join(filtered_lines)
+# # st.markdown(
+# #     """
+# #     <div style='text-align: center; padding-bottom: 1rem;'>
+# #         <h1>📧 Resume to HR Email Generator</h1>
+# #         <p style='font-size: 18px;'>Upload your resume and paste the job post to generate a tailored application email.</p>
+# #     </div>
+# #     """,
+# #     unsafe_allow_html=True
+# # )
+# # # ✅ Remove "Not Provided" lines from signature block
+# # def filter_signature_block(email_text):
+# #     if "Best regards," not in email_text:
+# #         return email_text
+# #     body, signature = email_text.split("Best regards,", 1)
+# #     signature_lines = signature.strip().splitlines()
+# #     filtered_lines = [line.strip() for line in signature_lines if line.strip().lower() != "not provided"]
+# #     return f"{body.strip()}\n\nBest regards,\n" + "\n".join(filtered_lines)
 
-# # ✅ Normalize spacing and formatting
-# def normalize_email_spacing(text):
-#     text = text.strip()
-#     lines = text.splitlines()
-#     lines = [line.lstrip() for line in lines]
-#     text = "\n".join(lines)
-#     text = re.sub(r'([^\n])\n([^\n])', r'\1\n\n\2', text)
-#     text = re.sub(r'\nBest regards,', r'\n\nBest regards,', text)
-#     text = re.sub(r'\n{3,}', '\n\n', text)
-#     if "Best regards," in text:
-#         parts = text.split("Best regards,")
-#         before = parts[0].rstrip()
-#         after = parts[1].strip().splitlines()
-#         after_clean = "\n".join([line.strip() for line in after if line.strip()])
-#         text = f"{before}\n\nBest regards,\n{after_clean}"
-#     return text
+# # # ✅ Normalize spacing and formatting
+# # def normalize_email_spacing(text):
+# #     text = text.strip()
+# #     lines = text.splitlines()
+# #     lines = [line.lstrip() for line in lines]
+# #     text = "\n".join(lines)
+# #     text = re.sub(r'([^\n])\n([^\n])', r'\1\n\n\2', text)
+# #     text = re.sub(r'\nBest regards,', r'\n\nBest regards,', text)
+# #     text = re.sub(r'\n{3,}', '\n\n', text)
+# #     if "Best regards," in text:
+# #         parts = text.split("Best regards,")
+# #         before = parts[0].rstrip()
+# #         after = parts[1].strip().splitlines()
+# #         after_clean = "\n".join([line.strip() for line in after if line.strip()])
+# #         text = f"{before}\n\nBest regards,\n{after_clean}"
+# #     return text
 
-# # Two-column layout
-# left_col, right_col = st.columns(2)
+# # # Two-column layout
+# # left_col, right_col = st.columns(2)
 
-# with left_col:
-#     st.header("📥 Input")
-#     resume_file = st.file_uploader("Upload Resume (PDF, DOCX, TXT)", type=["pdf", "docx", "txt"])
-#     jd_text_input = st.text_area("Paste -> your Job Post with HR Mail Text", height=250)
-#     job_title = st.text_input("Job Title (e.g., Data Scientist)")
+# # with left_col:
+# #     st.header("📥 Input")
+# #     resume_file = st.file_uploader("Upload Resume (PDF, DOCX, TXT)", type=["pdf", "docx", "txt"])
+# #     jd_text_input = st.text_area("Paste -> your Job Post with HR Mail Text", height=250)
+# #     job_title = st.text_input("Job Title (e.g., Data Scientist)")
 
-#     if "generate_clicked" not in st.session_state:
-#         st.session_state.generate_clicked = False
+# #     if "generate_clicked" not in st.session_state:
+# #         st.session_state.generate_clicked = False
 
-#     if st.button("Generate Email", key="generate_email_btn"):
-#         st.session_state.generate_clicked = True
+# #     if st.button("Generate Email", key="generate_email_btn"):
+# #         st.session_state.generate_clicked = True
 
-# if st.session_state.generate_clicked and resume_file and jd_text_input.strip() and job_title:
-#     with st.spinner("Extracting HR contact and company..."):
-#         hr_email, company = extract_hr_email_and_company(jd_text_input)
-#         if not hr_email or not company:
-#             st.error("Could not extract HR email or company name from the job post.")
-#         else:
-#             resume_text = parse_file(resume_file)
-#             name, candidate_email, candidate_phone, candidate_linkedin = extract_candidate_details(resume_text)
-#             jd_text = jd_text_input.strip()
+# # if st.session_state.generate_clicked and resume_file and jd_text_input.strip() and job_title:
+# #     with st.spinner("Extracting HR contact and company..."):
+# #         hr_email, company = extract_hr_email_and_company(jd_text_input)
+# #         if not hr_email or not company:
+# #             st.error("Could not extract HR email or company name from the job post.")
+# #         else:
+# #             resume_text = parse_file(resume_file)
+# #             name, candidate_email, candidate_phone, candidate_linkedin = extract_candidate_details(resume_text)
+# #             jd_text = jd_text_input.strip()
 
-#             raw_email = generate_application_email(
-#                 name,
-#                 candidate_email,
-#                 candidate_phone,
-#                 candidate_linkedin,
-#                 resume_text,
-#                 jd_text,
-#                 company,
-#                 job_title,
-#                 hr_email
-#             )
+# #             raw_email = generate_application_email(
+# #                 name,
+# #                 candidate_email,
+# #                 candidate_phone,
+# #                 candidate_linkedin,
+# #                 resume_text,
+# #                 jd_text,
+# #                 company,
+# #                 job_title,
+# #                 hr_email
+# #             )
 
-#             filtered_email = filter_signature_block(raw_email)
-#             cleaned_email = normalize_email_spacing(filtered_email)
+# #             filtered_email = filter_signature_block(raw_email)
+# #             cleaned_email = normalize_email_spacing(filtered_email)
 
-#             st.session_state.generated_email = cleaned_email
-#             st.session_state.edited_email = cleaned_email
-#             st.session_state.hr_email = hr_email
-#             st.session_state.company = company
-#             st.session_state.job_title = job_title
-#             st.session_state.candidate_info = {
-#                 "name": name,
-#                 "email": candidate_email,
-#                 "phone": candidate_phone,
-#                 "linkedin": candidate_linkedin
-#             }
+# #             st.session_state.generated_email = cleaned_email
+# #             st.session_state.edited_email = cleaned_email
+# #             st.session_state.hr_email = hr_email
+# #             st.session_state.company = company
+# #             st.session_state.job_title = job_title
+# #             st.session_state.candidate_info = {
+# #                 "name": name,
+# #                 "email": candidate_email,
+# #                 "phone": candidate_phone,
+# #                 "linkedin": candidate_linkedin
+# #             }
 
-# with right_col:
-#     if "generated_email" in st.session_state:
-#         st.header("📤 Output")
+# # with right_col:
+# #     if "generated_email" in st.session_state:
+# #         st.header("📤 Output")
 
-#         st.markdown("**Subject Line:**")
-#         st.code(f"Application for {st.session_state.job_title} at {st.session_state.company}", language="markdown")
+# #         st.markdown("**Subject Line:**")
+# #         st.code(f"Application for {st.session_state.job_title} at {st.session_state.company}", language="markdown")
 
-#         st.markdown("**HR Email ID:**")
-#         st.code(st.session_state.hr_email, language="markdown")
+# #         st.markdown("**HR Email ID:**")
+# #         st.code(st.session_state.hr_email, language="markdown")
 
-#         st.markdown("**✏️ Edit and Preview Email Body:**")
-#         edited_email_input = st.text_area(
-#             "Your email content:",
-#             value=st.session_state.edited_email,
-#             height=500,
-#             key="editable_email_box"
-#         )
-#         st.session_state.edited_email = edited_email_input
+# #         st.markdown("**✏️ Edit and Preview Email Body:**")
+# #         edited_email_input = st.text_area(
+# #             "Your email content:",
+# #             value=st.session_state.edited_email,
+# #             height=500,
+# #             key="editable_email_box"
+# #         )
+# #         st.session_state.edited_email = edited_email_input
 
         
 
 
-#         with st.expander("📤 Send Email via Your Gmail"):
+# #         with st.expander("📤 Send Email via Your Gmail"):
             
-#             sender_email = st.text_input("Your Gmail Address",placeholder="yourmail@gmail.com")
-#             app_password = st.text_input("Your Gmail App Password", type="password",placeholder="Password")
+# #             sender_email = st.text_input("Your Gmail Address",placeholder="yourmail@gmail.com")
+# #             app_password = st.text_input("Your Gmail App Password", type="password",placeholder="Password")
 
-#             with st.expander("ℹ️ How to Create a Gmail App Password"):
-#                 st.markdown("""
-#                 To send emails from your Gmail account using this app, you need to generate a Gmail App Password. Here's how:
+# #             with st.expander("ℹ️ How to Create a Gmail App Password"):
+# #                 st.markdown("""
+# #                 To send emails from your Gmail account using this app, you need to generate a Gmail App Password. Here's how:
 
-#                 1. **Enable 2-Step Verification** on your Google account  
-#                     → Go to [https://myaccount.google.com/security](https://myaccount.google.com/security)  
-#                     → Turn on 2-Step Verification
+# #                 1. **Enable 2-Step Verification** on your Google account  
+# #                     → Go to [https://myaccount.google.com/security](https://myaccount.google.com/security)  
+# #                     → Turn on 2-Step Verification
 
-#                 2. **Generate an App Password**  
-#                     → Visit [https://myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords)  
-#                     → Select **Mail** as the app  
-#                     → Choose **Other** and type something like “Resume App”  
-#                     → Click **Generate** and copy the 16-character password
+# #                 2. **Generate an App Password**  
+# #                     → Visit [https://myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords)  
+# #                     → Select **Mail** as the app  
+# #                     → Choose **Other** and type something like “Resume App”  
+# #                     → Click **Generate** and copy the 16-character password
 
-#                 3. **Paste the App Password above**  
-#                     → Use it in the field labeled “Your Gmail App Password”  
-#                     → This password is used only to send your email securely
+# #                 3. **Paste the App Password above**  
+# #                     → Use it in the field labeled “Your Gmail App Password”  
+# #                     → This password is used only to send your email securely
 
-#                 🔒 Your credentials are not stored — they’re used only to send your email.
-#                 """)
+# #                 🔒 Your credentials are not stored — they’re used only to send your email.
+# #                 """)
 
-#             if st.button("Send Email", key="send_email_btn"):
-#                 subject_line = f"Application for {st.session_state.job_title} at {st.session_state.company}"
-#                 send_result = send_email_via_gmail(
-#                     sender_email,
-#                     app_password,
-#                     st.session_state.hr_email,
-#                     subject_line,
-#                     st.session_state.edited_email,
-#                     resume_file
-#                 )
-#                 if send_result is True:
-#                     st.success("✅ Email sent successfully with resume attached!")
+# #             if st.button("Send Email", key="send_email_btn"):
+# #                 subject_line = f"Application for {st.session_state.job_title} at {st.session_state.company}"
+# #                 send_result = send_email_via_gmail(
+# #                     sender_email,
+# #                     app_password,
+# #                     st.session_state.hr_email,
+# #                     subject_line,
+# #                     st.session_state.edited_email,
+# #                     resume_file
+# #                 )
+# #                 if send_result is True:
+# #                     st.success("✅ Email sent successfully with resume attached!")
+# #                 else:
+# #                     st.error(f"❌ Failed to send email: {send_result}")
+
+# # st.markdown(
+# #     """
+# #     <style>
+# #     .footer {
+# #         position: fixed;
+# #         bottom: 0;
+# #         left: 0;
+# #         width: 100%;
+# #         background-color: #111;
+# #         color: white;
+# #         text-align: center;
+# #         padding: 10px 0;
+# #         font-size: 15px;
+# #         z-index: 100;
+# #     }
+# #     .footer a {
+# #         color: #1E90FF;
+# #         text-decoration: none;
+# #         margin: 0 8px;
+# #     }
+# #     </style>
+
+# #     <div class="footer">
+# #         Shashi Kumar Reddy |
+# #         📧 <a href="mailto:shashi.chintalapalli@gmail.com">shashi.chintalapalli@gmail.com</a> |
+# #         🌐 <a href="https://shashi-chintalapalli.github.io/" target="_blank">Portfolio</a> |
+# #         💻 <a href="https://github.com/Shashi-chintalapalli" target="_blank">GitHub</a>
+# #     </div>
+# #     """,
+# #     unsafe_allow_html=True
+# # )
+
+
+
+# import streamlit as st
+# from dotenv import load_dotenv
+
+# load_dotenv()
+# import re
+
+# from utils.parser import parse_file, extract_hr_email_and_company, extract_candidate_details
+# from utils.emailer import generate_application_email
+# from utils.gmail_sender import send_email_via_gmail
+
+# # ======================
+# # BASIC SETUP
+# # ======================
+# load_dotenv()
+# st.set_page_config(page_title="Resume to HR Email Generator", layout="wide")
+
+# # ----------------------
+# # SESSION STATE
+# # ----------------------
+# if "active_template" not in st.session_state:
+#     st.session_state.active_template = "template1"
+
+# # ======================
+# # HEADER
+# # ======================
+# st.markdown(
+#     """
+#     <div style="text-align:center; margin-bottom:20px;">
+#         <h1>🤖 AI-Powered Job Application Email Generator</h1>
+#         <p style="font-size:18px;">Choose a template to generate and send job application emails</p>
+#     </div>
+#     """,
+#     unsafe_allow_html=True
+# )
+
+# # ======================
+# # TEMPLATE BUTTONS (CENTERED, SIDE BY SIDE)
+# # ======================
+# col1, col2, col3, col4, col5 = st.columns([2, 3, 1, 3, 2])
+
+# with col2:
+#     if st.button("📝 HR Email Generator through Linkedin", use_container_width=True):
+#         st.session_state.active_template = "template1"
+
+# with col4:
+#     if st.button("Inquiry Remote Jobs", use_container_width=True):
+#         st.session_state.active_template = "template2"
+
+# st.markdown("<hr>", unsafe_allow_html=True)
+
+# # ======================
+# # COMMON HELPERS
+# # ======================
+# def filter_signature_block(email_text):
+#     if "Best regards," not in email_text:
+#         return email_text
+#     body, signature = email_text.split("Best regards,", 1)
+#     lines = [l for l in signature.splitlines() if l.strip().lower() != "not provided"]
+#     return f"{body.strip()}\n\nBest regards,\n" + "\n".join(lines)
+
+# def normalize_email_spacing(text):
+#     text = text.strip()
+#     text = re.sub(r'\n{3,}', '\n\n', text)
+#     return text
+
+# # =========================================================
+# # TEMPLATE 1 – FULL PROFESSIONAL EMAIL (YOUR MAIN APP)
+# # =========================================================
+# if st.session_state.active_template == "template1":
+
+#     left_col, right_col = st.columns(2)
+
+#     # ---------- INPUT ----------
+#     with left_col:
+#         st.header("📥 Linkedin HR Email Generator")
+
+#         resume_file = st.file_uploader(
+#             "Upload Resume (PDF, DOCX, TXT)",
+#             type=["pdf", "docx", "txt"]
+#         )
+
+#         jd_text_input = st.text_area(
+#             "Paste Job Post (with HR Email)",
+#             height=250
+#         )
+
+#         job_title = st.text_input("Job Title")
+
+#         if st.button("Generate Email"):
+#             if resume_file and jd_text_input.strip() and job_title:
+#                 hr_email, company = extract_hr_email_and_company(jd_text_input)
+
+#                 if not hr_email or not company:
+#                     st.error("❌ Could not extract HR email or company name.")
 #                 else:
-#                     st.error(f"❌ Failed to send email: {send_result}")
+#                     resume_text = parse_file(resume_file)
+#                     name, email, phone, linkedin = extract_candidate_details(resume_text)
 
+#                     raw_email = generate_application_email(
+#                         name,
+#                         email,
+#                         phone,
+#                         linkedin,
+#                         resume_text,
+#                         jd_text_input,
+#                         company,
+#                         job_title,
+#                         hr_email
+#                     )
+
+#                     cleaned = normalize_email_spacing(
+#                         filter_signature_block(raw_email)
+#                     )
+
+#                     st.session_state.generated_email = cleaned
+#                     st.session_state.hr_email = hr_email
+#                     st.session_state.company = company
+#                     st.session_state.job_title = job_title
+
+#     # ---------- OUTPUT ----------
+#     with right_col:
+#         if "generated_email" in st.session_state:
+#             st.header("📤 Output")
+
+#             subject = f"Application for {st.session_state.job_title} at {st.session_state.company}"
+#             st.markdown("**Subject Line**")
+#             st.code(subject)
+
+#             st.markdown("**HR Email**")
+#             st.code(st.session_state.hr_email)
+
+#             edited_email = st.text_area(
+#                 "✏️ Edit Email",
+#                 st.session_state.generated_email,
+#                 height=450
+#             )
+
+#             with st.expander("📨 Send Email via Gmail"):
+#                 sender_email = st.text_input("Your Gmail")
+#                 app_password = st.text_input("Gmail App Password", type="password")
+
+#                 if st.button("Send Email"):
+#                     result = send_email_via_gmail(
+#                         sender_email,
+#                         app_password,
+#                         st.session_state.hr_email,
+#                         subject,
+#                         edited_email,
+#                         resume_file
+#                     )
+
+#                     if result is True:
+#                         st.success("✅ Email sent successfully!")
+#                     else:
+#                         st.error(f"❌ Failed: {result}")
+# # =========================================================
+# # TEMPLATE 2 – ELIGIBILITY / VISA EMAIL (WITH RESUME)
+# # =========================================================
+# elif st.session_state.active_template == "template2":
+
+#     # Use SAME layout style as Template 1
+#     left_col, right_col = st.columns(2)
+
+#     # ======================
+#     # LEFT: INPUT
+#     # ======================
+#     with left_col:
+#         st.header("📥 Remote Enquiry Email Generator")
+
+#         # IMPORTANT: Let Streamlit manage this key
+#         resume_file = st.file_uploader(
+#             "Upload Resume (PDF, DOCX, TXT)",
+#             type=["pdf", "docx", "txt"],
+#             key="t2_resume"
+#         )
+
+#         jd_text = st.text_area(
+#             "Paste Job Post (with HR Email)",
+#             height=280,
+#             placeholder="Paste LinkedIn / Job Description text here"
+#         )
+
+#         job_title = st.text_input(
+#             "Job Title (e.g., Data Scientist)"
+#         )
+
+#         if st.button("Generate Email", key="t2_generate"):
+#             if not resume_file or not jd_text.strip() or not job_title:
+#                 st.error("Please upload resume, paste job post, and enter job title.")
+#             else:
+#                 hr_email, company = extract_hr_email_and_company(jd_text)
+
+#                 if not hr_email or not company:
+#                     st.error("Could not extract HR email or company name.")
+#                 else:
+#                     eligibility_email = f"""
+# Dear Team,
+
+# I hope you are doing well. I came across the {job_title} role at {company} while exploring remote data science opportunities and wanted to reach out for a quick clarification.
+
+# I am a Data Scientist with around 2 years of hands-on experience working across data science and AI use cases. I am currently based in India and noticed that this position is listed as remote. I wanted to check whether there is an option to work remotely from India, or if the role requires US-based work authorization.
+
+# I am actively looking for new opportunities and would be available to join immediately. Please find my resume attached for your reference.
+
+# Thank you for your time and consideration. I look forward to your response.
+
+# Best regards,  
+# Shashi Kumar Reddy Chintalapalli  
+# Data Scientist  
+# 📧 shashi.chintalapalli@gmail.com  
+# 🔗 LinkedIn: https://www.linkedin.com/in/shashi-chintalapalli/
+# """
+
+#                     # Store ONLY non-widget values
+#                     st.session_state.t2_email = normalize_email_spacing(
+#                         eligibility_email.strip()
+#                     )
+#                     st.session_state.t2_hr_email = hr_email
+#                     st.session_state.t2_job_title = job_title
+
+#     # ======================
+#     # RIGHT: OUTPUT
+#     # ======================
+#     with right_col:
+#         if "t2_email" in st.session_state:
+#             st.header("📤 Output")
+
+#             subject = f"Inquiry Regarding Remote {st.session_state.t2_job_title} Role – Eligibility"
+
+#             st.markdown("**Subject Line:**")
+#             st.code(subject)
+
+#             st.markdown("**HR Email ID:**")
+#             st.code(st.session_state.t2_hr_email)
+
+#             edited_email = st.text_area(
+#                 "✏️ Edit and Preview Email Body:",
+#                 st.session_state.t2_email,
+#                 height=450
+#             )
+
+#             with st.expander("📤 Send Email via Your Gmail"):
+#                 sender_email = st.text_input(
+#                     "Your Gmail Address",
+#                     placeholder="yourmail@gmail.com",
+#                     key="t2_sender"
+#                 )
+
+#                 app_password = st.text_input(
+#                     "Gmail App Password",
+#                     type="password",
+#                     placeholder="App Password",
+#                     key="t2_pass"
+#                 )
+
+#                 if st.button("Send Email", key="t2_send"):
+#                     resume_to_send = st.session_state.get("t2_resume")
+
+#                     if not resume_to_send:
+#                         st.error("Please upload a resume before sending.")
+#                     else:
+#                         result = send_email_via_gmail(
+#                             sender_email,
+#                             app_password,
+#                             st.session_state.t2_hr_email,
+#                             subject,
+#                             edited_email,
+#                             resume_file=resume_to_send
+#                         )
+
+#                         if result is True:
+#                             st.success("✅ Eligibility email sent successfully with resume attached!")
+#                         else:
+#                             st.error(f"❌ Failed to send email: {result}")
+
+
+# # DEFAULT
+# # =========================================================
+# else:
+#     st.info("👆 Select a template above to continue")
+
+# # ======================
+# # FOOTER
+# # ======================
 # st.markdown(
 #     """
 #     <style>
+#     /* Push page content above footer */
+#     .block-container {
+#         padding-bottom: 80px;
+#     }
+
+#     /* Fixed footer */
 #     .footer {
 #         position: fixed;
-#         bottom: 0;
 #         left: 0;
+#         bottom: 0;
 #         width: 100%;
-#         background-color: #111;
-#         color: white;
+#         background: #0e1117;
+#         color: #ffffff;
 #         text-align: center;
-#         padding: 10px 0;
-#         font-size: 15px;
-#         z-index: 100;
+#         padding: 12px 0;
+#         font-size: 14px;
+#         z-index: 9999;
+#         border-top: 1px solid #2a2a2a;
 #     }
+
 #     .footer a {
-#         color: #1E90FF;
+#         color: #4da3ff;
 #         text-decoration: none;
 #         margin: 0 8px;
+#     }
+
+#     .footer a:hover {
+#         text-decoration: underline;
 #     }
 #     </style>
 
@@ -196,9 +526,10 @@
 
 import streamlit as st
 from dotenv import load_dotenv
+import re
+import webbrowser
 
 load_dotenv()
-import re
 
 from utils.parser import parse_file, extract_hr_email_and_company, extract_candidate_details
 from utils.emailer import generate_application_email
@@ -207,7 +538,6 @@ from utils.gmail_sender import send_email_via_gmail
 # ======================
 # BASIC SETUP
 # ======================
-load_dotenv()
 st.set_page_config(page_title="Resume to HR Email Generator", layout="wide")
 
 # ----------------------
@@ -215,6 +545,9 @@ st.set_page_config(page_title="Resume to HR Email Generator", layout="wide")
 # ----------------------
 if "active_template" not in st.session_state:
     st.session_state.active_template = "template1"
+
+if "selected_role" not in st.session_state:
+    st.session_state.selected_role = None
 
 # ======================
 # HEADER
@@ -230,9 +563,9 @@ st.markdown(
 )
 
 # ======================
-# TEMPLATE BUTTONS (CENTERED, SIDE BY SIDE)
+# TEMPLATE BUTTONS
 # ======================
-col1, col2, col3, col4, col5 = st.columns([2, 3, 1, 3, 2])
+col1, col2, col3, col4, col5, col6, col7 = st.columns([1, 3, 0.5, 3, 0.5, 3, 1])
 
 with col2:
     if st.button("📝 HR Email Generator through Linkedin", use_container_width=True):
@@ -241,6 +574,11 @@ with col2:
 with col4:
     if st.button("Inquiry Remote Jobs", use_container_width=True):
         st.session_state.active_template = "template2"
+
+with col6:
+    if st.button("🔍 LinkedIn Time-Based Search", use_container_width=True):
+        st.session_state.active_template = "template3"
+        st.session_state.selected_role = None
 
 st.markdown("<hr>", unsafe_allow_html=True)
 
@@ -255,270 +593,131 @@ def filter_signature_block(email_text):
     return f"{body.strip()}\n\nBest regards,\n" + "\n".join(lines)
 
 def normalize_email_spacing(text):
-    text = text.strip()
-    text = re.sub(r'\n{3,}', '\n\n', text)
-    return text
+    return re.sub(r'\n{3,}', '\n\n', text.strip())
 
 # =========================================================
-# TEMPLATE 1 – FULL PROFESSIONAL EMAIL (YOUR MAIN APP)
+# TEMPLATE 1 – HR EMAIL GENERATOR
 # =========================================================
 if st.session_state.active_template == "template1":
 
     left_col, right_col = st.columns(2)
 
-    # ---------- INPUT ----------
     with left_col:
         st.header("📥 Linkedin HR Email Generator")
 
-        resume_file = st.file_uploader(
-            "Upload Resume (PDF, DOCX, TXT)",
-            type=["pdf", "docx", "txt"]
-        )
-
-        jd_text_input = st.text_area(
-            "Paste Job Post (with HR Email)",
-            height=250
-        )
-
+        resume_file = st.file_uploader("Upload Resume", type=["pdf", "docx", "txt"])
+        jd_text_input = st.text_area("Paste Job Post (with HR Email)", height=250)
         job_title = st.text_input("Job Title")
 
         if st.button("Generate Email"):
-            if resume_file and jd_text_input.strip() and job_title:
+            if resume_file and jd_text_input and job_title:
                 hr_email, company = extract_hr_email_and_company(jd_text_input)
+                resume_text = parse_file(resume_file)
+                name, email, phone, linkedin = extract_candidate_details(resume_text)
 
-                if not hr_email or not company:
-                    st.error("❌ Could not extract HR email or company name.")
-                else:
-                    resume_text = parse_file(resume_file)
-                    name, email, phone, linkedin = extract_candidate_details(resume_text)
+                raw_email = generate_application_email(
+                    name, email, phone, linkedin,
+                    resume_text, jd_text_input,
+                    company, job_title, hr_email
+                )
 
-                    raw_email = generate_application_email(
-                        name,
-                        email,
-                        phone,
-                        linkedin,
-                        resume_text,
-                        jd_text_input,
-                        company,
-                        job_title,
-                        hr_email
-                    )
+                st.session_state.generated_email = normalize_email_spacing(
+                    filter_signature_block(raw_email)
+                )
+                st.session_state.hr_email = hr_email
+                st.session_state.company = company
+                st.session_state.job_title = job_title
 
-                    cleaned = normalize_email_spacing(
-                        filter_signature_block(raw_email)
-                    )
-
-                    st.session_state.generated_email = cleaned
-                    st.session_state.hr_email = hr_email
-                    st.session_state.company = company
-                    st.session_state.job_title = job_title
-
-    # ---------- OUTPUT ----------
     with right_col:
         if "generated_email" in st.session_state:
-            st.header("📤 Output")
-
             subject = f"Application for {st.session_state.job_title} at {st.session_state.company}"
-            st.markdown("**Subject Line**")
             st.code(subject)
+            edited_email = st.text_area("Edit Email", st.session_state.generated_email, height=450)
 
-            st.markdown("**HR Email**")
-            st.code(st.session_state.hr_email)
-
-            edited_email = st.text_area(
-                "✏️ Edit Email",
-                st.session_state.generated_email,
-                height=450
-            )
-
-            with st.expander("📨 Send Email via Gmail"):
-                sender_email = st.text_input("Your Gmail")
-                app_password = st.text_input("Gmail App Password", type="password")
-
-                if st.button("Send Email"):
-                    result = send_email_via_gmail(
-                        sender_email,
-                        app_password,
-                        st.session_state.hr_email,
-                        subject,
-                        edited_email,
-                        resume_file
-                    )
-
-                    if result is True:
-                        st.success("✅ Email sent successfully!")
-                    else:
-                        st.error(f"❌ Failed: {result}")
 # =========================================================
-# TEMPLATE 2 – ELIGIBILITY / VISA EMAIL (WITH RESUME)
+# TEMPLATE 2 – REMOTE ENQUIRY
 # =========================================================
 elif st.session_state.active_template == "template2":
 
-    # Use SAME layout style as Template 1
     left_col, right_col = st.columns(2)
 
-    # ======================
-    # LEFT: INPUT
-    # ======================
     with left_col:
         st.header("📥 Remote Enquiry Email Generator")
+        resume_file = st.file_uploader("Upload Resume", type=["pdf", "docx", "txt"], key="t2")
+        jd_text = st.text_area("Paste Job Post", height=250)
+        job_title = st.text_input("Job Title")
 
-        # IMPORTANT: Let Streamlit manage this key
-        resume_file = st.file_uploader(
-            "Upload Resume (PDF, DOCX, TXT)",
-            type=["pdf", "docx", "txt"],
-            key="t2_resume"
-        )
-
-        jd_text = st.text_area(
-            "Paste Job Post (with HR Email)",
-            height=280,
-            placeholder="Paste LinkedIn / Job Description text here"
-        )
-
-        job_title = st.text_input(
-            "Job Title (e.g., Data Scientist)"
-        )
-
-        if st.button("Generate Email", key="t2_generate"):
-            if not resume_file or not jd_text.strip() or not job_title:
-                st.error("Please upload resume, paste job post, and enter job title.")
-            else:
-                hr_email, company = extract_hr_email_and_company(jd_text)
-
-                if not hr_email or not company:
-                    st.error("Could not extract HR email or company name.")
-                else:
-                    eligibility_email = f"""
+        if st.button("Generate Email", key="t2_btn"):
+            hr_email, company = extract_hr_email_and_company(jd_text)
+            st.session_state.t2_email = f"""
 Dear Team,
 
-I hope you are doing well. I came across the {job_title} role at {company} while exploring remote data science opportunities and wanted to reach out for a quick clarification.
+I am writing to inquire about the remote eligibility for the {job_title} role at {company}.
+I am based in India with 2+ years of experience and available to join immediately.
 
-I am a Data Scientist with around 2 years of hands-on experience working across data science and AI use cases. I am currently based in India and noticed that this position is listed as remote. I wanted to check whether there is an option to work remotely from India, or if the role requires US-based work authorization.
-
-I am actively looking for new opportunities and would be available to join immediately. Please find my resume attached for your reference.
-
-Thank you for your time and consideration. I look forward to your response.
-
-Best regards,  
-Shashi Kumar Reddy Chintalapalli  
-Data Scientist  
-📧 shashi.chintalapalli@gmail.com  
-🔗 LinkedIn: https://www.linkedin.com/in/shashi-chintalapalli/
+Best regards,
+Shashi Kumar Reddy
 """
+            st.session_state.t2_hr = hr_email
 
-                    # Store ONLY non-widget values
-                    st.session_state.t2_email = normalize_email_spacing(
-                        eligibility_email.strip()
-                    )
-                    st.session_state.t2_hr_email = hr_email
-                    st.session_state.t2_job_title = job_title
-
-    # ======================
-    # RIGHT: OUTPUT
-    # ======================
     with right_col:
         if "t2_email" in st.session_state:
-            st.header("📤 Output")
+            st.text_area("Email Preview", st.session_state.t2_email, height=450)
 
-            subject = f"Inquiry Regarding Remote {st.session_state.t2_job_title} Role – Eligibility"
-
-            st.markdown("**Subject Line:**")
-            st.code(subject)
-
-            st.markdown("**HR Email ID:**")
-            st.code(st.session_state.t2_hr_email)
-
-            edited_email = st.text_area(
-                "✏️ Edit and Preview Email Body:",
-                st.session_state.t2_email,
-                height=450
-            )
-
-            with st.expander("📤 Send Email via Your Gmail"):
-                sender_email = st.text_input(
-                    "Your Gmail Address",
-                    placeholder="yourmail@gmail.com",
-                    key="t2_sender"
-                )
-
-                app_password = st.text_input(
-                    "Gmail App Password",
-                    type="password",
-                    placeholder="App Password",
-                    key="t2_pass"
-                )
-
-                if st.button("Send Email", key="t2_send"):
-                    resume_to_send = st.session_state.get("t2_resume")
-
-                    if not resume_to_send:
-                        st.error("Please upload a resume before sending.")
-                    else:
-                        result = send_email_via_gmail(
-                            sender_email,
-                            app_password,
-                            st.session_state.t2_hr_email,
-                            subject,
-                            edited_email,
-                            resume_file=resume_to_send
-                        )
-
-                        if result is True:
-                            st.success("✅ Eligibility email sent successfully with resume attached!")
-                        else:
-                            st.error(f"❌ Failed to send email: {result}")
-
-
-# DEFAULT
 # =========================================================
-else:
-    st.info("👆 Select a template above to continue")
+# TEMPLATE 3 – LINKEDIN TIME-BASED SEARCH (BUTTON FLOW)
+# =========================================================
+elif st.session_state.active_template == "template3":
+
+    st.header("🔍 LinkedIn Time-Based Job Search")
+
+    LINK_MAP = {
+        "Data Scientist": {
+            "24h": "https://www.linkedin.com/search/results/content/?datePosted=%22past-24h%22&keywords=%22Data%20Scientist%22%20and%20%22hiring%22%20OR%20%220-2%20Years%22",
+            "week": "https://www.linkedin.com/search/results/content/?datePosted=%22past-week%22&keywords=%22Data%20Scientist%22%20and%20%22hiring%22%20OR%20%220-2%20Years%22",
+        },
+        "Machine Learning": {
+            "24h": "https://www.linkedin.com/search/results/content/?datePosted=%22past-24h%22&keywords=%22Machine%20Learning%22%20and%20%22hiring%22%20OR%20%220-2%20Years%22",
+            "week": "https://www.linkedin.com/search/results/content/?datePosted=%22past-week%22&keywords=%22Machine%20Learning%22%20and%20%22hiring%22%20OR%20%220-2%20Years%22",
+        },
+        "AI / ML Engineer": {
+            "24h": "https://www.linkedin.com/search/results/content/?datePosted=%22past-24h%22&keywords=%22AI%2FML%20Engineer%22%20and%20%22hiring%22%20OR%20%220-2%20Years%22",
+            "week": "https://www.linkedin.com/search/results/content/?datePosted=%22past-week%22&keywords=%22AI%2FML%20Engineer%22%20and%20%22hiring%22%20OR%20%220-2%20Years%22",
+        },
+        "Python Developer": {
+            "24h": "https://www.linkedin.com/search/results/content/?datePosted=%22past-24h%22&keywords=%22Python%20Developer%22%20and%20%22hiring%22%20OR%20%220-2%20Years%22",
+            "week": "https://www.linkedin.com/search/results/content/?datePosted=%22past-week%22&keywords=%22Python%20Developer%22%20and%20%22hiring%22%20OR%20%220-2%20Years%22",
+        },
+    }
+
+    st.subheader("Select Role")
+    role_cols = st.columns(4)
+
+    for col, role in zip(role_cols, LINK_MAP.keys()):
+        with col:
+            if st.button(role, use_container_width=True):
+                st.session_state.selected_role = role
+
+    if st.session_state.selected_role:
+        st.subheader(f"Timeline for {st.session_state.selected_role}")
+        t1, t2 = st.columns(2)
+
+        with t1:
+            if st.button("🚀 Past 24 Hours", use_container_width=True):
+                webbrowser.open_new_tab(LINK_MAP[st.session_state.selected_role]["24h"])
+
+        with t2:
+            if st.button("📅 Past Week", use_container_width=True):
+                webbrowser.open_new_tab(LINK_MAP[st.session_state.selected_role]["week"])
 
 # ======================
 # FOOTER
 # ======================
 st.markdown(
     """
-    <style>
-    /* Push page content above footer */
-    .block-container {
-        padding-bottom: 80px;
-    }
-
-    /* Fixed footer */
-    .footer {
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        background: #0e1117;
-        color: #ffffff;
-        text-align: center;
-        padding: 12px 0;
-        font-size: 14px;
-        z-index: 9999;
-        border-top: 1px solid #2a2a2a;
-    }
-
-    .footer a {
-        color: #4da3ff;
-        text-decoration: none;
-        margin: 0 8px;
-    }
-
-    .footer a:hover {
-        text-decoration: underline;
-    }
-    </style>
-
-    <div class="footer">
-        Shashi Kumar Reddy |
-        📧 <a href="mailto:shashi.chintalapalli@gmail.com">shashi.chintalapalli@gmail.com</a> |
-        🌐 <a href="https://shashi-chintalapalli.github.io/" target="_blank">Portfolio</a> |
-        💻 <a href="https://github.com/Shashi-chintalapalli" target="_blank">GitHub</a>
+    <div style="text-align:center; margin-top:40px; color:#aaa;">
+        Shashi Kumar Reddy | shashi.chintalapalli@gmail.com
     </div>
     """,
     unsafe_allow_html=True
 )
-
